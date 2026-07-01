@@ -1,5 +1,6 @@
 builds/**/png/
 builds/**/*.zip
+_demo_work/
 __pycache__/
 .pytest_cache/
 _skill_extract/

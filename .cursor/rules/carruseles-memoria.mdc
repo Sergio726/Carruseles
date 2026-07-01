@@ -10,7 +10,8 @@ Al iniciar trabajo de carrusel en este repo:
 
 1. Ejecutar `python stlabs_memory.py suggest` o leer `historial/carruseles.json`
 2. Proponer fondo y familia distintos al último carrusel (salvo pedido explícito)
-3. Al finalizar `package()`, pasar `meta` completo con: id, titulo, slides, fondo, familia_visual, origen, keyword_portada
-4. Si el carrusel se publica, registrar feedback con `python stlabs_memory.py feedback <id> --estado publicado`
+3. Al finalizar `package()`, pasar `meta` completo con campos obligatorios: `titulo`, `slides`, `fondo`, `familia_visual`, `origen`, `keyword_portada`
+4. Verificar registro con `python stlabs_memory.py list`
+5. Si el carrusel se publica, registrar feedback con `python stlabs_memory.py feedback <id> --estado publicado`
 
 Referencia: `SISTEMA-DISENO-CARRUSELES-STLABS.md` secciones 7 y 8.

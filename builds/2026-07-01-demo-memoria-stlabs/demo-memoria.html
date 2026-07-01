@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
+:root{--verde:#00FFB2;--red:#FF5247;--am:#FF9D3C;--neg:#0A0A0A;--graf:#141414;--gris:#1E1E1E;
+ --blanco:#F2F2F2;--gray:#9aa39c;
+ --mono:'IBM Plex Mono',monospace;--cond:'Barlow Condensed',sans-serif;--disp:'Bebas Neue',sans-serif;
+ --pop:'Poppins',sans-serif;--serif:'Lora',serif;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+body{background:#000;}
+.sheet{display:flex;flex-direction:column;gap:48px;padding:48px;background:#000;}
+.slide{position:relative;width:1080px;height:1350px;overflow:hidden;color:var(--blanco);
+ background:radial-gradient(58% 36% at 84% 6%, rgba(0,255,178,.07), transparent 60%),
+            radial-gradient(50% 36% at 12% 96%, rgba(0,255,178,.05), transparent 60%),
+            linear-gradient(165deg,#0d0d0d,#070707 60%,#0b0b0b);}
+.slide>*{position:relative;z-index:2;}
+.gr{color:var(--verde);} .red{color:var(--red);} .am{color:var(--am);}
+.ac{font-family:var(--serif);font-style:italic;font-weight:600;color:var(--verde);}
+b{font-weight:700;color:#fff;}
+
+/* retícula sutil opcional */
+.grid::before{content:'';position:absolute;inset:0;z-index:0;opacity:.4;
+ background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:60px 60px;}
+
+/* textura papel corrugado — .paper (notoria) / .paper.sutil */
+.paper::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.8;mix-blend-mode:overlay;
+ background:repeating-linear-gradient(90deg,
+   rgba(255,255,255,.11) 0px, rgba(255,255,255,.11) 1.5px,
+   rgba(255,255,255,0) 3px, rgba(255,255,255,0) 10px,
+   rgba(0,0,0,.5) 12px, rgba(0,0,0,.5) 13.5px, rgba(255,255,255,0) 15px);}
+.paper.sutil::after{opacity:.45;}
+
+/* footer firma (obligatorio) */
+.web{position:absolute;left:0;right:0;bottom:70px;text-align:center;z-index:6;font-family:var(--mono);
+ font-size:25px;letter-spacing:2px;color:var(--verde);opacity:.9;}
+
+/* contador, corchetes, puntitos (opcionales) */
+.snum{position:absolute;top:64px;right:84px;z-index:8;font-family:var(--mono);font-size:21px;color:var(--verde);}
+.bk{position:absolute;width:34px;height:34px;border:2px solid rgba(0,255,178,.55);z-index:6;}
+.bk-tl{top:40px;left:40px;border-right:none;border-bottom:none;}
+.bk-tr{top:40px;right:40px;border-left:none;border-bottom:none;}
+.bk-bl{bottom:40px;left:40px;border-right:none;border-top:none;}
+.bk-br{bottom:40px;right:40px;border-left:none;border-top:none;}
+.dc{position:absolute;z-index:7;display:flex;gap:6px;}
+.dc i{width:7px;height:7px;border-radius:50%;background:var(--verde);box-shadow:0 0 7px rgba(0,255,178,.6);}
+.dc-tr{top:60px;right:88px;} .dc-bl{bottom:60px;left:88px;}
+
+/* barra de progreso (opcional) */
+.prog{position:absolute;left:84px;right:84px;bottom:120px;height:3px;background:#1c1c1c;z-index:8;border-radius:3px;overflow:hidden;}
+.prog span{display:block;height:100%;background:var(--verde);box-shadow:0 0 10px rgba(0,255,178,.5);}
+
+/* ── MECÁNICA: nodo-flecha partido por la costura ── */
+.brnode{position:absolute;top:597px;width:156px;height:156px;border-radius:50%;z-index:8;
+ background:radial-gradient(circle at 50% 45%,#151515,#0b0b0b);border:2px solid var(--verde);
+ box-shadow:0 0 30px rgba(0,255,178,.3), inset 0 0 22px rgba(0,0,0,.6);
+ display:flex;align-items:center;justify-content:center;}
+.brnode span{font-family:var(--pop);font-weight:800;font-size:74px;color:var(--verde);line-height:1;}
+.br-r{left:1002px;} .br-l{left:-78px;}
+
+/* ── MECÁNICA: iPhone realista (entero) ── */
+.iphone{position:relative;width:600px;height:1240px;padding:15px;border-radius:100px;
+ background:linear-gradient(125deg,#4a4e54 0%,#1b1d20 15%,#0b0c0e 38%,#101113 52%,#1b1d20 78%,#52565c 100%);
+ box-shadow:0 75px 150px rgba(0,0,0,.82),0 0 0 1.5px #000,inset 0 2px 4px rgba(255,255,255,.4),
+  inset 0 -2px 4px rgba(255,255,255,.12),inset 3px 0 4px rgba(255,255,255,.18),inset -3px 0 4px rgba(255,255,255,.18);
+ transform:perspective(2500px) rotateX(5deg) rotateY(-16deg) rotateZ(-7deg);transform-origin:center center;}
+.ip-bezel{width:100%;height:100%;background:#050505;border-radius:86px;padding:13px;box-shadow:inset 0 0 0 2px #202225;}
+.ip-screen{position:relative;width:100%;height:100%;border-radius:75px;overflow:hidden;
+ background:radial-gradient(120% 80% at 50% 0%, #11140f, #070707);}
+.ip-island{position:absolute;top:48px;left:50%;transform:translateX(-50%);width:132px;height:38px;background:#000;border-radius:22px;z-index:8;}
+.ip-cam{position:absolute;right:20px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;
+ background:radial-gradient(circle at 38% 32%,#26333d,#03060a);}
+.ip-reflect{position:absolute;inset:0;z-index:9;pointer-events:none;
+ background:linear-gradient(118deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,0) 19%,rgba(255,255,255,0) 70%,rgba(255,255,255,.06) 100%);}
+.ip-side{position:absolute;background:linear-gradient(90deg,#3a3d42,#0d0e10);border-radius:5px;z-index:2;}
+.ip-pwr{right:-7px;top:392px;width:8px;height:168px;}.ip-vu{left:-7px;top:356px;width:8px;height:104px;}
+.ip-vd{left:-7px;top:480px;width:8px;height:104px;}.ip-act{left:-7px;top:252px;width:8px;height:60px;}
+/* para partir el teléfono por la costura */
+.phone-bridge{position:absolute;top:372px;width:600px;height:1320px;z-index:4;}
+.pb-right{left:780px;} .pb-left{left:-300px;}
+
+/* ── MECÁNICA: foto real integrada al negro ── */
+.ph-bg{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;
+ filter:brightness(.55) contrast(1.05) saturate(.75);}
+.ph-scrim{position:absolute;inset:0;z-index:1;
+ background:radial-gradient(60% 40% at 80% 8%, rgba(0,255,178,.07), transparent 55%),
+            linear-gradient(180deg, rgba(7,7,7,.32) 0%, rgba(7,7,7,.12) 34%, rgba(7,7,7,.82) 66%, #070707 92%);}
+
+.cc{background:#121212;border:1px solid #242424;border-radius:16px;padding:18px 16px;display:flex;flex-direction:column;align-items:center;}
+.cc-top{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.cc-y{font-family:var(--pop);font-weight:700;font-size:30px;color:#fff;}
+.cc-r{font-family:var(--mono);font-size:18px;color:#666;}
+.donut{width:132px;height:132px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.donut i{width:80px;height:80px;border-radius:50%;background:#121212;}
+.mbar{width:100%;height:7px;background:#262626;border-radius:5px;margin-top:14px;overflow:hidden;}
+.mbar span{display:block;height:100%;background:var(--verde);}
+.cc-lab{width:100%;display:flex;justify-content:space-between;margin-top:10px;font-family:var(--mono);font-size:17px;color:#9a9a9a;}
+
+.ui{padding:128px 58px 0;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.ui-head{display:flex;align-items:center;gap:12px;font-family:var(--cond);font-weight:700;font-size:48px;letter-spacing:3px;color:#fff;}
+.ui-bolt{color:var(--verde);}
+.ui-badge{margin-top:26px;font-family:var(--mono);font-size:15px;color:var(--verde);border:1px solid rgba(0,255,178,.5);border-radius:30px;padding:9px 17px;}
+.ui-hl{margin-top:30px;font-family:var(--pop);font-weight:800;font-size:50px;line-height:1.02;color:#fff;}
+.ui-sub{margin-top:20px;font-family:var(--cond);font-size:26px;color:#9aa39c;}
+.ui-input{width:100%;margin-top:36px;background:#141414;border:1px solid #2e2e2e;border-radius:18px;padding:26px;font-family:var(--cond);font-size:36px;color:#6a6a6a;text-align:left;}
+.ui-btn{width:100%;margin-top:16px;background:var(--verde);color:#04130b;border-radius:18px;font-family:var(--cond);font-weight:700;font-size:38px;padding:26px;box-shadow:0 0 44px rgba(0,255,178,.5);}
+</style></head><body><div class="sheet"><section class="slide paper"><div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 60px;"><h1 style="font-family:var(--disp);font-size:120px;color:#fff;">DEMO <span class="gr">MEMORIA</span></h1></div><div class="web">sebastian.stlabs.ar</div></section></div></body></html>

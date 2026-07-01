@@ -16,6 +16,8 @@ Antes de cada carrusel:
 ```bash
 python stlabs_memory.py suggest
 python stlabs_memory.py status
+python stlabs_memory.py list
+python stlabs_memory.py list --estado publicado
 ```
 
 Después de publicar:
@@ -30,11 +32,19 @@ Plantillas de copy:
 python stlabs_memory.py plantilla educativo ACCION=automatizar DOLOR=perder_leads N=1 TITULO=Setup
 ```
 
+Demo sin Playwright:
+
+```bash
+python scripts/demo_memory.py
+```
+
 ## Flujo de trabajo
 
 1. Consultar memoria (`suggest`)
 2. `write_html()` + `render()` con [stlabs_kit.py](stlabs_kit.py)
-3. `package(build_dir, out_name, meta={...})` — registra en `builds/` e `historial/`
+3. `package(build_dir, out_name, meta={...})` — registra en `builds/<id>/` e `historial/`
+
+Campos obligatorios en `meta`: `fondo`, `familia_visual`, `origen`, `slides`, `keyword_portada`.
 
 ## Documentación
 
@@ -44,5 +54,5 @@ python stlabs_memory.py plantilla educativo ACCION=automatizar DOLOR=perder_lead
 ## Tests
 
 ```bash
-pytest tests/ -v
+python -m pytest tests/ -v
 ```

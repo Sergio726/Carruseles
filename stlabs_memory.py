@@ -36,6 +36,7 @@ FAMILIAS = [
 ]
 
 FEEDBACK_ESTADOS = ("borrador", "publicado", "descartado")
+META_REQUERIDOS = ("fondo", "familia_visual", "origen", "slides", "keyword_portada")
 
 
 def empty_index() -> dict:
@@ -93,8 +94,21 @@ def registrar_entrada(meta: dict) -> None:
         "fondo": meta["fondo"],
         "familia_visual": meta["familia_visual"],
     }
+    fb = meta.get("feedback", {})
+    if fb.get("estado"):
+        entrada["feedback_estado"] = fb["estado"]
     idx["carruseles"].append(entrada)
     idx["ultimo_id"] = entrada["id"]
+    save_index(idx)
+
+
+def _sync_index_feedback(build_id: str, feedback: dict) -> None:
+    idx = load_index()
+    for c in idx["carruseles"]:
+        if c["id"] == build_id:
+            if feedback.get("estado"):
+                c["feedback_estado"] = feedback["estado"]
+            break
     save_index(idx)
 
 
@@ -108,12 +122,16 @@ def resumen_para_agente() -> str:
     sf, sfa = sugerir_fondo(), sugerir_familia()
     lines = ["## Memoria STLabs — contexto automático", ""]
     if u:
+        fb = u.get("feedback_estado")
+        fb_line = f"- Estado: `{fb}`" if fb else ""
         lines += [
             f"**Último carrusel:** `{u['id']}` ({u.get('fecha', '?')})",
             f"- Fondo: `{u.get('fondo')}` · Familia: `{u.get('familia_visual')}`",
             f"- Título: {u.get('titulo') or '(sin título)'}",
-            "",
         ]
+        if fb_line:
+            lines.append(fb_line)
+        lines.append("")
     else:
         lines += ["_Sin carruseles registrados aún._", ""]
     lines += [
@@ -135,6 +153,20 @@ def _default_id(titulo: str) -> str:
     return f"{date.today().isoformat()}-{slugify(titulo)}"
 
 
+def resolve_build_id(meta: dict, fallback_titulo: str) -> str:
+    meta.setdefault("titulo", fallback_titulo)
+    meta.setdefault("id", _default_id(meta["titulo"]))
+    return meta["id"]
+
+
+def validar_meta(meta: dict) -> None:
+    faltantes = [k for k in META_REQUERIDOS if k not in meta or meta[k] in (None, "")]
+    if faltantes:
+        raise ValueError(f"meta incompleto — faltan: {', '.join(faltantes)}")
+    if meta["origen"] not in ("screenshot", "original"):
+        raise ValueError("meta['origen'] debe ser 'screenshot' o 'original'")
+
+
 def load_manifest(build_path: Path) -> dict:
     return json.loads((Path(build_path) / "manifest.json").read_text(encoding="utf-8"))
 
@@ -149,9 +181,10 @@ def registrar_carrusel(build_dir: Path, meta: dict) -> Path:
     (build_dir / "manifest.json").write_text(manifest_text, encoding="utf-8")
 
     dest = BUILDS_DIR / meta["id"]
-    if dest.exists():
-        shutil.rmtree(dest)
-    shutil.copytree(build_dir, dest)
+    if build_dir.resolve() != dest.resolve():
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(build_dir, dest)
     registrar_entrada(meta)
     return dest
 
@@ -160,6 +193,8 @@ def listar_builds(estado: str | None = None) -> list[dict]:
     BUILDS_DIR.mkdir(parents=True, exist_ok=True)
     builds = []
     for d in sorted(BUILDS_DIR.iterdir()):
+        if not d.is_dir() or d.name.startswith("."):
+            continue
         manifest = d / "manifest.json"
         if manifest.exists():
             m = load_manifest(d)
@@ -175,6 +210,7 @@ def actualizar_feedback(build_id: str, feedback: dict) -> None:
     m = load_manifest(BUILDS_DIR / build_id)
     m["feedback"] = {**m.get("feedback", {}), **feedback}
     path.write_text(json.dumps(m, ensure_ascii=False, indent=2), encoding="utf-8")
+    _sync_index_feedback(build_id, feedback)
 
 
 def _default_plantillas() -> dict:
@@ -211,7 +247,20 @@ def cmd_status() -> int:
         return 0
     print(f"Último: {u['id']} ({u['fecha']})")
     print(f"  Fondo: {u['fondo']} | Familia: {u['familia_visual']}")
+    if u.get("feedback_estado"):
+        print(f"  Estado: {u['feedback_estado']}")
     print(f"  Total en índice: {len(load_index()['carruseles'])}")
+    return 0
+
+
+def cmd_list(estado: str | None = None) -> int:
+    builds = listar_builds(estado=estado)
+    if not builds:
+        print("Sin builds registrados." + (f" (filtro: {estado})" if estado else ""))
+        return 0
+    for m in builds:
+        fb = m.get("feedback", {}).get("estado", "—")
+        print(f"{m['id']}  {m.get('titulo', '')}  [{fb}]  fondo={m.get('fondo')}")
     return 0
 
 
@@ -262,6 +311,9 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("status")
     sub.add_parser("suggest")
 
+    ls = sub.add_parser("list")
+    ls.add_argument("--estado", choices=FEEDBACK_ESTADOS)
+
     fb = sub.add_parser("feedback")
     fb.add_argument("build_id")
     fb.add_argument("--estado", choices=FEEDBACK_ESTADOS)
@@ -277,6 +329,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_status()
     if args.cmd == "suggest":
         return cmd_suggest()
+    if args.cmd == "list":
+        return cmd_list(args.estado)
     if args.cmd == "feedback":
         return cmd_feedback(args.build_id, args.estado, args.notas)
     if args.cmd == "plantilla":

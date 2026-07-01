@@ -235,19 +235,26 @@ def render(build_dir, html_name="carrusel.html"):
 def package(build_dir, out_name, html_name="carrusel.html", output_dir=None, meta=None):
     """Embebe fuentes base64, copia PNGs, arma tira de preview + ZIP.
 
-    output_dir: destino (default REPO/builds/<out_name> o legado /mnt/user-data/outputs)
+    output_dir: destino (default REPO/builds/<id> si meta, sino out_name)
     meta: dict opcional → dispara registrar_carrusel() al finalizar
     """
-    from stlabs_memory import REPO_ROOT, registrar_carrusel
+    from stlabs_memory import REPO_ROOT, registrar_carrusel, resolve_build_id, validar_meta
 
     B = pathlib.Path(build_dir)
     html = (B / html_name).read_text(encoding="utf-8").replace(
         "<style>", "<style>" + embedded_fonts_css(), 1
     )
 
+    if meta is not None:
+        validar_meta(meta)
+        resolve_build_id(meta, out_name)
+
     if output_dir is None:
-        legacy = pathlib.Path("/mnt/user-data/outputs") / out_name
-        output_dir = legacy if legacy.parent.exists() else REPO_ROOT / "builds" / out_name
+        if meta is not None:
+            output_dir = REPO_ROOT / "builds" / meta["id"]
+        else:
+            legacy = pathlib.Path("/mnt/user-data/outputs") / out_name
+            output_dir = legacy if legacy.parent.exists() else REPO_ROOT / "builds" / out_name
     OUT = pathlib.Path(output_dir)
     OUT.mkdir(parents=True, exist_ok=True)
     final_html = OUT / f"{out_name}.html"
@@ -270,7 +277,6 @@ def package(build_dir, out_name, html_name="carrusel.html", output_dir=None, met
             zf.write(p, p.name)
         zf.write(final_html, final_html.name)
     if meta is not None:
-        meta.setdefault("titulo", out_name)
         registrar_carrusel(OUT, meta)
     return OUT
 
