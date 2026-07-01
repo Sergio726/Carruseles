@@ -1,5 +1,10 @@
 builds/**/png/
 builds/**/*.zip
+builds/**/slide-*.png
+builds/**/_preview-tira.png
+builds/**/carrusel.html
+builds/**/STLabs-*.html
+builds/facebook-cover/cover.html
 _demo_work/
 __pycache__/
 .pytest_cache/

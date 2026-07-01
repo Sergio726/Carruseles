@@ -1,5 +1,5 @@
 {
-  "ultimo_id": "2026-07-01-demo-memoria-stlabs",
+  "ultimo_id": "2026-07-01-tu-sitio-web-no-es-una-tarjeta",
   "carruseles": [
     {
       "id": "2026-07-01-demo-memoria-stlabs",
@@ -8,6 +8,24 @@
       "slides": 1,
       "fondo": "piedra_roca",
       "familia_visual": "manifiesto"
+    },
+    {
+      "id": "2026-07-01-tu-crm-no-es-un-excel",
+      "fecha": "2026-07-01",
+      "titulo": "Tu CRM No Es Un Excel",
+      "slides": 6,
+      "fondo": "papel_corrugado",
+      "familia_visual": "blueprint",
+      "feedback_estado": "descartado"
+    },
+    {
+      "id": "2026-07-01-tu-sitio-web-no-es-una-tarjeta",
+      "fecha": "2026-07-01",
+      "titulo": "Tu Sitio Web No Es Una Tarjeta",
+      "slides": 6,
+      "fondo": "concreto_industrial",
+      "familia_visual": "operator_log",
+      "feedback_estado": "publicado"
     }
   ]
 }

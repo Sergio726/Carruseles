@@ -1,0 +1,15 @@
+CARRUSEL STLabs — Tu Sitio Web (clon Vilma)
+==========================================
+
+Archivos listos para Instagram:
+
+  slide-01.png ... slide-06.png  → subir en orden al carrusel
+  _preview-tira.png              → vista previa de los 6 slides
+  STLabs-Tu-Sitio-Web.zip        → todo empaquetado
+  STLabs-Tu-Sitio-Web.html       → editable (fuentes embebidas)
+
+Slide 6 usa tu imagen: slide 6.png (carpeta recusos carrousel)
+
+CTA: Comentá WEB
+
+Firma en todos los slides: sebastian.stlabs.ar

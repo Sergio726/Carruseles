@@ -13,14 +13,18 @@ Reglas de marca: ver SISTEMA-DISENO-CARRUSELES-STLABS.md
 """
 import base64, pathlib, shutil, zipfile
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 1. TOKENS DE MARCA
-# ─────────────────────────────────────────────────────────────────────────────
-VERDE="#00FFB2"; RED="#FF5247"; AMBER="#FF9D3C"
-NEG="#0A0A0A"; GRAF="#141414"; GRIS="#1E1E1E"; BLANCO="#F2F2F2"; GRAY="#9aa39c"
+REPO_ROOT = pathlib.Path(__file__).resolve().parent
+_LINUX_STLABS = pathlib.Path("/usr/share/fonts/truetype/stlabs/")
+_LINUX_GFONTS = pathlib.Path("/usr/share/fonts/truetype/google-fonts/")
+_LOCAL_FONTS = REPO_ROOT / "fonts"
 
-STLABS = "/usr/share/fonts/truetype/stlabs/"
-GFONTS = "/usr/share/fonts/truetype/google-fonts/"
+def _font_dir(linux_path: pathlib.Path) -> str:
+    if linux_path.exists():
+        return str(linux_path) + "/"
+    return str(_LOCAL_FONTS) + "/"
+
+STLABS = _font_dir(_LINUX_STLABS)
+GFONTS = _font_dir(_LINUX_GFONTS)
 
 # (familia, archivo, peso, estilo)
 FONT_FACES = [
@@ -38,13 +42,22 @@ FONT_FACES = [
 ]
 
 def _face(fam, path, w, style):
-    d = base64.b64encode(pathlib.Path(path).read_bytes()).decode()
+    p = pathlib.Path(path)
+    if not p.exists():
+        return ""
+    d = base64.b64encode(p.read_bytes()).decode()
     return (f"@font-face{{font-family:'{fam}';font-style:{style};font-weight:{w};"
             f"font-display:block;src:url(data:font/ttf;base64,{d}) format('truetype');}}")
 
 def embedded_fonts_css():
     """Devuelve el bloque @font-face con TODAS las fuentes de marca en base64."""
     return "".join(_face(*f) for f in FONT_FACES)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1. TOKENS DE MARCA
+# ─────────────────────────────────────────────────────────────────────────────
+VERDE="#00FFB2"; RED="#FF5247"; AMBER="#FF9D3C"
+NEG="#0A0A0A"; GRAF="#141414"; GRIS="#1E1E1E"; BLANCO="#F2F2F2"; GRAY="#9aa39c"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. CSS BASE (tokens + chrome + componentes + mecánicas)
