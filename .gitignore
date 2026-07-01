@@ -1,0 +1,6 @@
+builds/**/png/
+builds/**/*.zip
+__pycache__/
+.pytest_cache/
+_skill_extract/
+_skill.zip

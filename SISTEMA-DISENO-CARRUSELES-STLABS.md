@@ -138,9 +138,21 @@ NO: robots/cerebros/circuitos · 3D plástico · estética SaaS genérica · sim
 
 1. ¿Viene de screenshot? → aplicar reglas de clonado (sección 0) primero
 2. Copiar stlabs_kit.py a /home/claude/buildN/
-3. Elegir fondo/textura diferente al carrusel anterior (sección 4)
-4. Elegir familia visual (sección 5)
-5. Definir contenido slide a slide: voseo, keyword literal, 1–2 verdes por slide
-6. generate.py → render.py → seam tests → ajustar → package.py
-7. Verificar: sebastian.stlabs.ar en todos · sin @Instagram · sin contador de slides
-8. Entregar: tira preview → ZIP → slides → HTML
+3. Ejecutar `python stlabs_memory.py suggest` → elegir fondo/familia sugeridos (secciones 4 y 5)
+4. Definir contenido slide a slide: voseo, keyword literal, 1–2 verdes por slide
+5. generate.py → render.py → seam tests → ajustar → package.py
+6. Verificar: sebastian.stlabs.ar en todos · sin @Instagram · sin contador de slides
+7. Entregar: tira preview → ZIP → slides → HTML
+8. `package(..., meta={...})` registra en builds/ e historial/
+9. Si se publica: `python stlabs_memory.py feedback <id> --estado publicado`
+
+---
+
+## 8. Memoria operativa (obligatorio)
+
+Antes de crear cualquier carrusel:
+1. Leer `historial/carruseles.json` o ejecutar `python stlabs_memory.py suggest`
+2. Usar fondo y familia sugeridos (distintos al último salvo pedido explícito)
+3. Al empaquetar, pasar `meta=` a `package()` con manifest completo
+
+Campos mínimos del manifest: `id`, `titulo`, `slides`, `fondo`, `familia_visual`, `origen` (`screenshot`|`original`), `keyword_portada`.

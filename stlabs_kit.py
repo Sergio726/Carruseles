@@ -232,22 +232,46 @@ def render(build_dir, html_name="carrusel.html"):
         br.close()
     return sorted((B/"png").glob("slide-*.png"))
 
-def package(build_dir, out_name, html_name="carrusel.html"):
-    """Embebe fuentes base64, copia PNGs, arma tira de preview + ZIP a /mnt/user-data/outputs/<out_name>/."""
+def package(build_dir, out_name, html_name="carrusel.html", output_dir=None, meta=None):
+    """Embebe fuentes base64, copia PNGs, arma tira de preview + ZIP.
+
+    output_dir: destino (default REPO/builds/<out_name> o legado /mnt/user-data/outputs)
+    meta: dict opcional → dispara registrar_carrusel() al finalizar
+    """
+    from stlabs_memory import REPO_ROOT, registrar_carrusel
+
     B = pathlib.Path(build_dir)
-    html = (B/html_name).read_text(encoding="utf-8").replace("<style>", "<style>"+embedded_fonts_css(), 1)
-    OUT = pathlib.Path("/mnt/user-data/outputs")/out_name; OUT.mkdir(parents=True, exist_ok=True)
-    final_html = OUT/f"{out_name}.html"; final_html.write_text(html, encoding="utf-8")
-    pngs = sorted((B/"png").glob("slide-*.png"))
-    for p in pngs: shutil.copy(p, OUT/p.name)
-    from PIL import Image
-    ims=[Image.open(p) for p in pngs]; w,h=ims[0].size; sc=400
-    strip=Image.new("RGB",(sc*len(ims),int(h*sc/w)),(10,10,10))
-    for i,im in enumerate(ims): strip.paste(im.resize((sc,int(h*sc/w))),(i*sc,0))
-    strip.save(OUT/"_preview-tira.png")
-    with zipfile.ZipFile(OUT/f"{out_name}.zip","w",zipfile.ZIP_DEFLATED) as zf:
-        for p in pngs: zf.write(p,p.name)
+    html = (B / html_name).read_text(encoding="utf-8").replace(
+        "<style>", "<style>" + embedded_fonts_css(), 1
+    )
+
+    if output_dir is None:
+        legacy = pathlib.Path("/mnt/user-data/outputs") / out_name
+        output_dir = legacy if legacy.parent.exists() else REPO_ROOT / "builds" / out_name
+    OUT = pathlib.Path(output_dir)
+    OUT.mkdir(parents=True, exist_ok=True)
+    final_html = OUT / f"{out_name}.html"
+    final_html.write_text(html, encoding="utf-8")
+    pngs = sorted((B / "png").glob("slide-*.png"))
+    for p in pngs:
+        shutil.copy(p, OUT / p.name)
+    if pngs:
+        from PIL import Image
+
+        ims = [Image.open(p) for p in pngs]
+        w, h = ims[0].size
+        sc = 400
+        strip = Image.new("RGB", (sc * len(ims), int(h * sc / w)), (10, 10, 10))
+        for i, im in enumerate(ims):
+            strip.paste(im.resize((sc, int(h * sc / w))), (i * sc, 0))
+        strip.save(OUT / "_preview-tira.png")
+    with zipfile.ZipFile(OUT / f"{out_name}.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+        for p in pngs:
+            zf.write(p, p.name)
         zf.write(final_html, final_html.name)
+    if meta is not None:
+        meta.setdefault("titulo", out_name)
+        registrar_carrusel(OUT, meta)
     return OUT
 
 # Demo mínima

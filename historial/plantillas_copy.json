@@ -1,0 +1,12 @@
+{
+  "screenshot_clone": {
+    "portada": "{KEYWORD} en {TEMA}",
+    "cta_final": "Comentá {KEYWORD} y te mando el recurso.",
+    "footer_siempre": "sebastian.stlabs.ar"
+  },
+  "educativo": {
+    "portada": "Cómo {ACCION} sin {DOLOR}",
+    "paso": "Paso {N}: {TITULO}",
+    "cta_final": "Guardá esto para cuando lo necesites."
+  }
+}
